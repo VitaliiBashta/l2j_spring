@@ -1,44 +1,4 @@
-/*
- * Copyright © 2004-2021 L2J Server
- * 
- * This file is part of L2J Server.
- * 
- * L2J Server is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * L2J Server is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.l2jserver.gameserver;
-
-import static com.l2jserver.gameserver.config.Configuration.customs;
-import static com.l2jserver.gameserver.config.Configuration.database;
-import static com.l2jserver.gameserver.config.Configuration.general;
-import static com.l2jserver.gameserver.config.Configuration.geodata;
-import static com.l2jserver.gameserver.config.Configuration.hexId;
-import static com.l2jserver.gameserver.config.Configuration.mmo;
-import static com.l2jserver.gameserver.config.Configuration.server;
-import static com.l2jserver.gameserver.config.Configuration.telnet;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
-import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Calendar;
-import java.util.logging.LogManager;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import com.l2jserver.commons.UPnPService;
 import com.l2jserver.commons.dao.ServerNameDAO;
@@ -49,91 +9,12 @@ import com.l2jserver.gameserver.bbs.service.ForumsBBSManager;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.dao.factory.impl.DAOFactory;
 import com.l2jserver.gameserver.data.json.ExperienceData;
-import com.l2jserver.gameserver.data.sql.impl.AnnouncementsTable;
-import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
-import com.l2jserver.gameserver.data.sql.impl.CharSummonTable;
-import com.l2jserver.gameserver.data.sql.impl.ClanTable;
-import com.l2jserver.gameserver.data.sql.impl.CrestTable;
-import com.l2jserver.gameserver.data.sql.impl.NpcBufferTable;
-import com.l2jserver.gameserver.data.sql.impl.OfflineTradersTable;
-import com.l2jserver.gameserver.data.sql.impl.SummonSkillsTable;
-import com.l2jserver.gameserver.data.sql.impl.TeleportLocationTable;
-import com.l2jserver.gameserver.data.xml.impl.AdminData;
-import com.l2jserver.gameserver.data.xml.impl.ArmorSetsData;
-import com.l2jserver.gameserver.data.xml.impl.BuyListData;
-import com.l2jserver.gameserver.data.xml.impl.CategoryData;
-import com.l2jserver.gameserver.data.xml.impl.ClassListData;
-import com.l2jserver.gameserver.data.xml.impl.DoorData;
-import com.l2jserver.gameserver.data.xml.impl.EnchantItemData;
-import com.l2jserver.gameserver.data.xml.impl.EnchantItemGroupsData;
-import com.l2jserver.gameserver.data.xml.impl.EnchantItemHPBonusData;
-import com.l2jserver.gameserver.data.xml.impl.EnchantItemOptionsData;
-import com.l2jserver.gameserver.data.xml.impl.EnchantSkillGroupsData;
-import com.l2jserver.gameserver.data.xml.impl.FishData;
-import com.l2jserver.gameserver.data.xml.impl.FishingMonstersData;
-import com.l2jserver.gameserver.data.xml.impl.FishingRodsData;
-import com.l2jserver.gameserver.data.xml.impl.HennaData;
-import com.l2jserver.gameserver.data.xml.impl.HitConditionBonusData;
-import com.l2jserver.gameserver.data.xml.impl.InitialEquipmentData;
-import com.l2jserver.gameserver.data.xml.impl.InitialShortcutData;
-import com.l2jserver.gameserver.data.xml.impl.KarmaData;
-import com.l2jserver.gameserver.data.xml.impl.MultisellData;
-import com.l2jserver.gameserver.data.xml.impl.NpcData;
-import com.l2jserver.gameserver.data.xml.impl.OptionData;
-import com.l2jserver.gameserver.data.xml.impl.PetDataTable;
-import com.l2jserver.gameserver.data.xml.impl.PlayerCreationPointData;
-import com.l2jserver.gameserver.data.xml.impl.PlayerTemplateData;
-import com.l2jserver.gameserver.data.xml.impl.PlayerXpPercentLostData;
-import com.l2jserver.gameserver.data.xml.impl.RecipeData;
-import com.l2jserver.gameserver.data.xml.impl.SecondaryAuthData;
-import com.l2jserver.gameserver.data.xml.impl.SiegeScheduleData;
-import com.l2jserver.gameserver.data.xml.impl.SkillLearnData;
-import com.l2jserver.gameserver.data.xml.impl.SkillTreesData;
-import com.l2jserver.gameserver.data.xml.impl.StaticObjectData;
-import com.l2jserver.gameserver.data.xml.impl.TransformData;
-import com.l2jserver.gameserver.data.xml.impl.UIData;
-import com.l2jserver.gameserver.datatables.AugmentationData;
-import com.l2jserver.gameserver.datatables.BotReportTable;
-import com.l2jserver.gameserver.datatables.EventDroplist;
-import com.l2jserver.gameserver.datatables.ItemTable;
-import com.l2jserver.gameserver.datatables.MerchantPriceConfigTable;
-import com.l2jserver.gameserver.datatables.SkillData;
-import com.l2jserver.gameserver.datatables.SpawnTable;
+import com.l2jserver.gameserver.data.sql.impl.*;
+import com.l2jserver.gameserver.data.xml.impl.*;
+import com.l2jserver.gameserver.datatables.*;
 import com.l2jserver.gameserver.handler.EffectHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
-import com.l2jserver.gameserver.instancemanager.AirShipManager;
-import com.l2jserver.gameserver.instancemanager.AntiFeedManager;
-import com.l2jserver.gameserver.instancemanager.AuctionManager;
-import com.l2jserver.gameserver.instancemanager.BoatManager;
-import com.l2jserver.gameserver.instancemanager.CastleManager;
-import com.l2jserver.gameserver.instancemanager.CastleManorManager;
-import com.l2jserver.gameserver.instancemanager.ClanHallManager;
-import com.l2jserver.gameserver.instancemanager.ClanHallSiegeManager;
-import com.l2jserver.gameserver.instancemanager.CoupleManager;
-import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
-import com.l2jserver.gameserver.instancemanager.DayNightSpawnManager;
-import com.l2jserver.gameserver.instancemanager.DimensionalRiftManager;
-import com.l2jserver.gameserver.instancemanager.FortManager;
-import com.l2jserver.gameserver.instancemanager.FortSiegeManager;
-import com.l2jserver.gameserver.instancemanager.FourSepulchersManager;
-import com.l2jserver.gameserver.instancemanager.GlobalVariablesManager;
-import com.l2jserver.gameserver.instancemanager.GraciaSeedsManager;
-import com.l2jserver.gameserver.instancemanager.GrandBossManager;
-import com.l2jserver.gameserver.instancemanager.InstanceManager;
-import com.l2jserver.gameserver.instancemanager.ItemAuctionManager;
-import com.l2jserver.gameserver.instancemanager.ItemsOnGroundManager;
-import com.l2jserver.gameserver.instancemanager.MailManager;
-import com.l2jserver.gameserver.instancemanager.MapRegionManager;
-import com.l2jserver.gameserver.instancemanager.MercTicketManager;
-import com.l2jserver.gameserver.instancemanager.PetitionManager;
-import com.l2jserver.gameserver.instancemanager.PunishmentManager;
-import com.l2jserver.gameserver.instancemanager.QuestManager;
-import com.l2jserver.gameserver.instancemanager.RaidBossPointsManager;
-import com.l2jserver.gameserver.instancemanager.RaidBossSpawnManager;
-import com.l2jserver.gameserver.instancemanager.SiegeManager;
-import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
-import com.l2jserver.gameserver.instancemanager.WalkingManager;
-import com.l2jserver.gameserver.instancemanager.ZoneManager;
+import com.l2jserver.gameserver.instancemanager.*;
 import com.l2jserver.gameserver.model.AutoSpawnHandler;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.PartyMatchRoomList;
@@ -153,6 +34,20 @@ import com.l2jserver.gameserver.taskmanager.TaskManager;
 import com.l2jserver.gameserver.util.DeadLockDetector;
 import com.l2jserver.mmocore.SelectorConfig;
 import com.l2jserver.mmocore.SelectorThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Calendar;
+import java.util.logging.LogManager;
+
+import static com.l2jserver.gameserver.config.Configuration.*;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public final class GameServer {
 	
@@ -163,13 +58,13 @@ public final class GameServer {
 	private static final String SCRIPT = "-s";
 	
 	private static final String GEODATA = "-gd";
-	
-	private final SelectorThread<L2GameClient> _selectorThread;
-	
-	private final L2GamePacketHandler _gamePacketHandler;
-	
-	private final DeadLockDetector _deadDetectThread;
-	
+
+  private final SelectorThread<L2GameClient> selectorThread;
+
+  private final L2GamePacketHandler gamePacketHandler;
+
+  private final DeadLockDetector deadDetectThread;
+
 	public static GameServer gameServer;
 	
 	public static final Calendar dateTimeServerStarted = Calendar.getInstance();
@@ -182,11 +77,9 @@ public final class GameServer {
 		final var serverLoadStart = System.currentTimeMillis();
 		printSection("Database");
 		ConnectionFactory.builder() //
-			.withDriver(database().getDriver()) //
 			.withUrl(database().getURL()) //
 			.withUser(database().getUser()) //
 			.withPassword(database().getPassword()) //
-			.withConnectionPool(database().getConnectionPool()) //
 			.withMaxIdleTime(database().getMaxIdleTime()) //
 			.withMaxPoolSize(database().getMaxConnections()) //
 			.build();
@@ -397,13 +290,12 @@ public final class GameServer {
 		}
 		
 		if (general().deadLockDetector()) {
-			_deadDetectThread = new DeadLockDetector();
-			_deadDetectThread.setDaemon(true);
-			_deadDetectThread.start();
+      deadDetectThread = new DeadLockDetector();
+      deadDetectThread.setDaemon(true);
+      deadDetectThread.start();
 		} else {
-			_deadDetectThread = null;
+      deadDetectThread = null;
 		}
-		System.gc();
 		// maxMemory is the upper limit the jvm can use, totalMemory the size of
 		// the current allocation pool, freeMemory the unused memory in the allocation pool
 		long freeMem = ((Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory()) + Runtime.getRuntime().freeMemory()) / 1048576;
@@ -418,10 +310,12 @@ public final class GameServer {
 		sc.SLEEP_TIME = mmo().getSleepTime();
 		sc.HELPER_BUFFER_COUNT = mmo().getHelperBufferCount();
 		sc.TCP_NODELAY = mmo().isTcpNoDelay();
-		
-		_gamePacketHandler = new L2GamePacketHandler();
-		_selectorThread = new SelectorThread<>(sc, _gamePacketHandler, _gamePacketHandler, _gamePacketHandler, new IPv4Filter());
-		
+
+    gamePacketHandler = new L2GamePacketHandler();
+    selectorThread =
+        new SelectorThread<>(
+            sc, gamePacketHandler, gamePacketHandler, gamePacketHandler, new IPv4Filter());
+
 		InetAddress bindAddress = null;
 		if (!server().getHost().equals("*")) {
 			try {
@@ -432,8 +326,8 @@ public final class GameServer {
 		}
 		
 		try {
-			_selectorThread.openServerSocket(bindAddress, server().getPort());
-			_selectorThread.start();
+      selectorThread.openServerSocket(bindAddress, server().getPort());
+      selectorThread.start();
 			LOG.info("Now listening on {}:{}", server().getHost(), server().getPort());
 		} catch (IOException ex) {
 			LOG.error("Failed to open server socket!", ex);
@@ -479,15 +373,15 @@ public final class GameServer {
 	}
 	
 	public SelectorThread<L2GameClient> getSelectorThread() {
-		return _selectorThread;
+    return selectorThread;
 	}
 	
 	public L2GamePacketHandler getL2GamePacketHandler() {
-		return _gamePacketHandler;
+    return gamePacketHandler;
 	}
 	
 	public DeadLockDetector getDeadLockDetectorThread() {
-		return _deadDetectThread;
+    return deadDetectThread;
 	}
 	
 	public static void printSection(String s) {
