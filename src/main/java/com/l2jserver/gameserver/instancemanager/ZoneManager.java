@@ -18,21 +18,6 @@
  */
 package com.l2jserver.gameserver.instancemanager;
 
-import java.io.File;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.L2WorldRegion;
@@ -50,6 +35,15 @@ import com.l2jserver.gameserver.model.zone.type.L2OlympiadStadiumZone;
 import com.l2jserver.gameserver.model.zone.type.L2RespawnZone;
 import com.l2jserver.gameserver.model.zone.type.NpcSpawnTerritory;
 import com.l2jserver.gameserver.util.IXmlReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import java.io.File;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * This class manages the zones
@@ -475,16 +469,6 @@ public final class ZoneManager implements IXmlReader {
 		return temp;
 	}
 	
-	/**
-	 * Gets the zone.
-	 * @param <T> the generic type
-	 * @param x the x
-	 * @param y the y
-	 * @param z the z
-	 * @param type the type
-	 * @return zone from given coordinates
-	 */
-	@SuppressWarnings("unchecked")
 	public <T extends L2ZoneType> T getZone(int x, int y, int z, Class<T> type) {
 		final L2WorldRegion region = L2World.getInstance().getRegion(x, y);
 		for (L2ZoneType zone : region.getZones()) {
@@ -557,14 +541,6 @@ public final class ZoneManager implements IXmlReader {
 		return null;
 	}
 	
-	/**
-	 * For testing purposes only.
-	 * @param <T> the generic type
-	 * @param obj the obj
-	 * @param type the type
-	 * @return the closest zone
-	 */
-	@SuppressWarnings("unchecked")
 	public <T extends L2ZoneType> T getClosestZone(L2Object obj, Class<T> type) {
 		T zone = getZone(obj, type);
 		if (zone == null) {

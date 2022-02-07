@@ -18,24 +18,6 @@
  */
 package com.l2jserver.gameserver.model.entity;
 
-import static com.l2jserver.gameserver.config.Configuration.clan;
-import static com.l2jserver.gameserver.config.Configuration.fortress;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.FortUpdater;
 import com.l2jserver.gameserver.FortUpdater.UpdaterType;
@@ -63,6 +45,18 @@ import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.l2jserver.gameserver.config.Configuration.clan;
+import static com.l2jserver.gameserver.config.Configuration.fortress;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public final class Fort extends AbstractResidence {
 	
 	private static final Logger _log = Logger.getLogger(Fort.class.getName());
@@ -78,9 +72,9 @@ public final class Fort extends AbstractResidence {
 	private int _state = 0;
 	private int _castleId = 0;
 	private int _supplyLvL = 0;
-	private final Map<Integer, FortFunction> _function;
-	private final ScheduledFuture<?>[] _FortUpdater = new ScheduledFuture<?>[2];
-	
+  private final Map<Integer, FortFunction> function;
+  private final ScheduledFuture<?>[] fortUpdater = new ScheduledFuture<?>[2];
+
 	// Spawn Data
 	private boolean _isSuspiciousMerchantSpawned = false;
 	private final List<L2Spawn> _siegeNpcs = new CopyOnWriteArrayList<>();
@@ -212,7 +206,7 @@ public final class Fort extends AbstractResidence {
 		super(fortId);
 		load();
 		loadFlagPoles();
-		_function = new ConcurrentHashMap<>();
+    function = new ConcurrentHashMap<>();
 		if (getOwnerClan() != null) {
 			setVisibleFlag(true);
 			loadFunctions();
@@ -229,13 +223,8 @@ public final class Fort extends AbstractResidence {
 		}
 	}
 	
-	/**
-	 * Return function with id
-	 * @param type
-	 * @return
-	 */
 	public FortFunction getFunction(int type) {
-		return _function.get(type);
+    return function.get(type);
 	}
 	
 	public void endOfSiege(L2Clan clan) {
@@ -250,12 +239,6 @@ public final class Fort extends AbstractResidence {
 		getResidenceZone().banishForeigners(getOwnerClan().getId());
 	}
 	
-	/**
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return true if object is inside the zone
-	 */
 	public boolean checkIfInZone(int x, int y, int z) {
 		return getZone().isInsideZone(x, y, z);
 	}
@@ -501,12 +484,27 @@ public final class Fort extends AbstractResidence {
 				}
 				initial = fortress().getPeriodicUpdateFrequency() - initial;
 				if ((fortress().getMaxKeepTime() <= 0) || (getOwnedTime() < (fortress().getMaxKeepTime() * 3600))) {
-					_FortUpdater[0] = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new FortUpdater(this, clan, runCount, UpdaterType.PERIODIC_UPDATE), initial, fortress().getPeriodicUpdateFrequency()); // Schedule owner tasks to start running
+          fortUpdater[0] =
+              ThreadPoolManager.getInstance()
+                  .scheduleGeneralAtFixedRate(
+                      new FortUpdater(this, clan, runCount, UpdaterType.PERIODIC_UPDATE),
+                      initial,
+                      fortress()
+                          .getPeriodicUpdateFrequency()); // Schedule owner tasks to start running
 					if (fortress().getMaxKeepTime() > 0) {
-						_FortUpdater[1] = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new FortUpdater(this, clan, runCount, UpdaterType.MAX_OWN_TIME), 3600000, 3600000); // Schedule owner tasks to remove owener
+            fortUpdater[1] =
+                ThreadPoolManager.getInstance()
+                    .scheduleGeneralAtFixedRate(
+                        new FortUpdater(this, clan, runCount, UpdaterType.MAX_OWN_TIME),
+                        3600000,
+                        3600000); // Schedule owner tasks to remove owener
 					}
 				} else {
-					_FortUpdater[1] = ThreadPoolManager.getInstance().scheduleGeneral(new FortUpdater(this, clan, 0, UpdaterType.MAX_OWN_TIME), 60000); // Schedule owner tasks to remove owner
+          fortUpdater[1] =
+              ThreadPoolManager.getInstance()
+                  .scheduleGeneral(
+                      new FortUpdater(this, clan, 0, UpdaterType.MAX_OWN_TIME),
+                      60000); // Schedule owner tasks to remove owner
 				}
 			} else {
 				setOwnerClan(null);
@@ -524,7 +522,16 @@ public final class Fort extends AbstractResidence {
 			ps.setInt(1, getResidenceId());
 			try (var rs = ps.executeQuery()) {
 				while (rs.next()) {
-					_function.put(rs.getInt("type"), new FortFunction(rs.getInt("type"), rs.getInt("lvl"), rs.getInt("lease"), 0, rs.getLong("rate"), rs.getLong("endTime"), true));
+          function.put(
+              rs.getInt("type"),
+              new FortFunction(
+                  rs.getInt("type"),
+                  rs.getInt("lvl"),
+                  rs.getInt("lease"),
+                  0,
+                  rs.getLong("rate"),
+                  rs.getLong("endTime"),
+                  true));
 				}
 			}
 		} catch (Exception e) {
@@ -537,7 +544,7 @@ public final class Fort extends AbstractResidence {
 	 * @param functionType
 	 */
 	public void removeFunction(int functionType) {
-		_function.remove(functionType);
+    function.remove(functionType);
 		try (var con = ConnectionFactory.getInstance().getConnection();
 			var ps = con.prepareStatement("DELETE FROM fort_functions WHERE fort_id=? AND type=?")) {
 			ps.setInt(1, getResidenceId());
@@ -552,7 +559,7 @@ public final class Fort extends AbstractResidence {
 	 * Remove all fort functions.
 	 */
 	private void removeAllFunctions() {
-		for (int id : _function.keySet()) {
+    for (int id : function.keySet()) {
 			removeFunction(id);
 		}
 	}
@@ -567,19 +574,19 @@ public final class Fort extends AbstractResidence {
 			}
 		}
 		if (addNew) {
-			_function.put(type, new FortFunction(type, lvl, lease, 0, rate, 0, false));
+      function.put(type, new FortFunction(type, lvl, lease, 0, rate, 0, false));
 		} else {
 			if ((lvl == 0) && (lease == 0)) {
 				removeFunction(type);
 			} else {
-				int diffLease = lease - _function.get(type).getLease();
+        int diffLease = lease - function.get(type).getLease();
 				if (diffLease > 0) {
-					_function.remove(type);
-					_function.put(type, new FortFunction(type, lvl, lease, 0, rate, -1, false));
+          function.remove(type);
+          function.put(type, new FortFunction(type, lvl, lease, 0, rate, -1, false));
 				} else {
-					_function.get(type).setLease(lease);
-					_function.get(type).setLvl(lvl);
-					_function.get(type).dbSave();
+          function.get(type).setLease(lease);
+          function.get(type).setLvl(lvl);
+          function.get(type).dbSave();
 				}
 			}
 		}
@@ -677,25 +684,36 @@ public final class Fort extends AbstractResidence {
 				L2World.getInstance().getPlayers().forEach(p -> p.sendPacket(sm));
 				clan.broadcastToOnlineMembers(new PledgeShowInfoUpdate(clan));
 				clan.broadcastToOnlineMembers(Music.SIEGE_VICTORY.getPacket());
-				if (_FortUpdater[0] != null) {
-					_FortUpdater[0].cancel(false);
+        if (fortUpdater[0] != null) {
+          fortUpdater[0].cancel(false);
 				}
-				if (_FortUpdater[1] != null) {
-					_FortUpdater[1].cancel(false);
+        if (fortUpdater[1] != null) {
+          fortUpdater[1].cancel(false);
 				}
-				_FortUpdater[0] = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new FortUpdater(this, clan, 0, UpdaterType.PERIODIC_UPDATE), fortress().getPeriodicUpdateFrequency(), fortress().getPeriodicUpdateFrequency()); // Schedule owner tasks to start running
+        fortUpdater[0] =
+            ThreadPoolManager.getInstance()
+                .scheduleGeneralAtFixedRate(
+                    new FortUpdater(this, clan, 0, UpdaterType.PERIODIC_UPDATE),
+                    fortress().getPeriodicUpdateFrequency(),
+                    fortress()
+                        .getPeriodicUpdateFrequency()); // Schedule owner tasks to start running
 				if (fortress().getMaxKeepTime() > 0) {
-					_FortUpdater[1] = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new FortUpdater(this, clan, 0, UpdaterType.MAX_OWN_TIME), 3600000, 3600000); // Schedule owner tasks to remove owner
+          fortUpdater[1] =
+              ThreadPoolManager.getInstance()
+                  .scheduleGeneralAtFixedRate(
+                      new FortUpdater(this, clan, 0, UpdaterType.MAX_OWN_TIME),
+                      3600000,
+                      3600000); // Schedule owner tasks to remove owner
 				}
 			} else {
-				if (_FortUpdater[0] != null) {
-					_FortUpdater[0].cancel(false);
+        if (fortUpdater[0] != null) {
+          fortUpdater[0].cancel(false);
 				}
-				_FortUpdater[0] = null;
-				if (_FortUpdater[1] != null) {
-					_FortUpdater[1].cancel(false);
+        fortUpdater[0] = null;
+        if (fortUpdater[1] != null) {
+          fortUpdater[1].cancel(false);
 				}
-				_FortUpdater[1] = null;
+        fortUpdater[1] = null;
 			}
 		} catch (Exception e) {
 			_log.log(Level.WARNING, "Exception: updateOwnerInDB(L2Clan clan): " + e.getMessage(), e);
@@ -768,10 +786,10 @@ public final class Fort extends AbstractResidence {
 	}
 	
 	public long getTimeTillNextFortUpdate() {
-		if (_FortUpdater[0] == null) {
+    if (fortUpdater[0] == null) {
 			return 0;
 		}
-		return _FortUpdater[0].getDelay(TimeUnit.SECONDS);
+    return fortUpdater[0].getDelay(TimeUnit.SECONDS);
 	}
 	
 	public void updateClansReputation(L2Clan owner, boolean removePoints) {

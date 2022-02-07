@@ -1,44 +1,18 @@
-/*
- * Copyright © 2004-2021 L2J Server
- * 
- * This file is part of L2J Server.
- * 
- * L2J Server is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * L2J Server is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.l2jserver.gameserver.model;
-
-import static com.l2jserver.gameserver.config.Configuration.general;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.l2jserver.gameserver.data.sql.impl.CharNameTable;
 import com.l2jserver.gameserver.data.xml.impl.AdminData;
 import com.l2jserver.gameserver.model.actor.L2Playable;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static com.l2jserver.gameserver.config.Configuration.general;
 
 public final class L2World {
 	
@@ -74,16 +48,16 @@ public final class L2World {
 	/** number of regions */
 	private static final int REGIONS_X = (MAP_MAX_X >> SHIFT_BY) + OFFSET_X;
 	private static final int REGIONS_Y = (MAP_MAX_Y >> SHIFT_BY) + OFFSET_Y;
-	
-	/** Map containing all the players in game. */
-	private final Map<Integer, L2PcInstance> _allPlayers = new ConcurrentHashMap<>();
-	/** Map containing all visible objects. */
-	private final Map<Integer, L2Object> _allObjects = new ConcurrentHashMap<>();
-	/** Map with the pets instances and their owner ID. */
-	private final Map<Integer, L2PetInstance> _petsInstance = new ConcurrentHashMap<>();
-	
-	private L2WorldRegion[][] _worldRegions;
-	
+
+  /** Map containing all the players in game. */
+  private final Map<Integer, L2PcInstance> allPlayers = new ConcurrentHashMap<>();
+  /** Map containing all visible objects. */
+  private final Map<Integer, L2Object> allObjects = new ConcurrentHashMap<>();
+  /** Map with the pets instances and their owner ID. */
+  private final Map<Integer, L2PetInstance> petsInstance = new ConcurrentHashMap<>();
+
+  private L2WorldRegion[][] worldRegions;
+
 	/** Constructor of L2World. */
 	protected L2World() {
 		initRegions();
@@ -99,11 +73,11 @@ public final class L2World {
 	 * @param object
 	 */
 	public void storeObject(L2Object object) {
-		if (_allObjects.containsKey(object.getObjectId())) {
+    if (allObjects.containsKey(object.getObjectId())) {
 			LOG.warn("Current object: {} already exist in OID map!", object);
 			return;
 		}
-		_allObjects.put(object.getObjectId(), object);
+    allObjects.put(object.getObjectId(), object);
 	}
 	
 	/**
@@ -117,7 +91,7 @@ public final class L2World {
 	 * @param object the object to remove
 	 */
 	public void removeObject(L2Object object) {
-		_allObjects.remove(object.getObjectId());
+    allObjects.remove(object.getObjectId());
 	}
 	
 	/**
@@ -129,11 +103,11 @@ public final class L2World {
 	 * @return the L2Object object that belongs to an ID or null if no object found.
 	 */
 	public L2Object findObject(int objectId) {
-		return _allObjects.get(objectId);
+    return allObjects.get(objectId);
 	}
 	
 	public Collection<L2Object> getVisibleObjects() {
-		return _allObjects.values();
+    return allObjects.values();
 	}
 	
 	/**
@@ -141,7 +115,7 @@ public final class L2World {
 	 * @return count off all L2World objects
 	 */
 	public int getVisibleObjectsCount() {
-		return _allObjects.size();
+    return allObjects.size();
 	}
 	
 	public List<L2PcInstance> getAllGMs() {
@@ -149,7 +123,7 @@ public final class L2World {
 	}
 	
 	public Collection<L2PcInstance> getPlayers() {
-		return _allPlayers.values();
+    return allPlayers.values();
 	}
 	
 	/**
@@ -158,7 +132,8 @@ public final class L2World {
 	 * @return the players sorted by the comparator
 	 */
 	public L2PcInstance[] getPlayersSortedBy(Comparator<L2PcInstance> comparator) {
-		final L2PcInstance[] players = _allPlayers.values().toArray(new L2PcInstance[_allPlayers.values().size()]);
+    final L2PcInstance[] players =
+        allPlayers.values().toArray(new L2PcInstance[allPlayers.values().size()]);
 		Arrays.sort(players, comparator);
 		return players;
 	}
@@ -168,7 +143,7 @@ public final class L2World {
 	 * @return number of online players.
 	 */
 	public int getAllPlayersCount() {
-		return _allPlayers.size();
+    return allPlayers.size();
 	}
 	
 	/**
@@ -185,7 +160,7 @@ public final class L2World {
 	 * @return the player instance corresponding to the given object ID.
 	 */
 	public L2PcInstance getPlayer(int objectId) {
-		return _allPlayers.get(objectId);
+    return allPlayers.get(objectId);
 	}
 	
 	/**
@@ -193,7 +168,7 @@ public final class L2World {
 	 * @return the pet instance from the given ownerId.
 	 */
 	public L2PetInstance getPet(int ownerId) {
-		return _petsInstance.get(ownerId);
+    return petsInstance.get(ownerId);
 	}
 	
 	/**
@@ -203,7 +178,7 @@ public final class L2World {
 	 * @return
 	 */
 	public L2PetInstance addPet(int ownerId, L2PetInstance pet) {
-		return _petsInstance.put(ownerId, pet);
+    return petsInstance.put(ownerId, pet);
 	}
 	
 	/**
@@ -211,7 +186,7 @@ public final class L2World {
 	 * @param ownerId ID of the owner
 	 */
 	public void removePet(int ownerId) {
-		_petsInstance.remove(ownerId);
+    petsInstance.remove(ownerId);
 	}
 	
 	/**
@@ -219,7 +194,7 @@ public final class L2World {
 	 * @param pet the pet to remove
 	 */
 	public void removePet(L2PetInstance pet) {
-		_petsInstance.remove(pet.getOwner().getObjectId());
+    petsInstance.remove(pet.getOwner().getObjectId());
 	}
 	
 	/**
@@ -274,7 +249,7 @@ public final class L2World {
 	 * @param player the player to add
 	 */
 	public void addPlayerToWorld(L2PcInstance player) {
-		_allPlayers.put(player.getObjectId(), player);
+    allPlayers.put(player.getObjectId(), player);
 	}
 	
 	/**
@@ -282,7 +257,7 @@ public final class L2World {
 	 * @param player the player to remove
 	 */
 	public void removeFromAllPlayers(L2PcInstance player) {
-		_allPlayers.remove(player.getObjectId());
+    allPlayers.remove(player.getObjectId());
 	}
 	
 	/**
@@ -471,11 +446,12 @@ public final class L2World {
 	 * @return
 	 */
 	public L2WorldRegion getRegion(Location point) {
-		return _worldRegions[(point.getX() >> SHIFT_BY) + OFFSET_X][(point.getY() >> SHIFT_BY) + OFFSET_Y];
+    return worldRegions[(point.getX() >> SHIFT_BY) + OFFSET_X][
+        (point.getY() >> SHIFT_BY) + OFFSET_Y];
 	}
 	
 	public L2WorldRegion getRegion(int x, int y) {
-		return _worldRegions[(x >> SHIFT_BY) + OFFSET_X][(y >> SHIFT_BY) + OFFSET_Y];
+    return worldRegions[(x >> SHIFT_BY) + OFFSET_X][(y >> SHIFT_BY) + OFFSET_Y];
 	}
 	
 	/**
@@ -483,7 +459,7 @@ public final class L2World {
 	 * @return
 	 */
 	public L2WorldRegion[][] getWorldRegions() {
-		return _worldRegions;
+    return worldRegions;
 	}
 	
 	/**
@@ -501,11 +477,11 @@ public final class L2World {
 	 * Initialize the world regions.
 	 */
 	private void initRegions() {
-		_worldRegions = new L2WorldRegion[REGIONS_X + 1][REGIONS_Y + 1];
-		
+    worldRegions = new L2WorldRegion[REGIONS_X + 1][REGIONS_Y + 1];
+
 		for (int i = 0; i <= REGIONS_X; i++) {
 			for (int j = 0; j <= REGIONS_Y; j++) {
-				_worldRegions[i][j] = new L2WorldRegion(i, j);
+        worldRegions[i][j] = new L2WorldRegion(i, j);
 			}
 		}
 		
@@ -514,7 +490,7 @@ public final class L2World {
 				for (int a = -1; a <= 1; a++) {
 					for (int b = -1; b <= 1; b++) {
 						if (validRegion(x + a, y + b)) {
-							_worldRegions[x + a][y + b].addSurroundingRegion(_worldRegions[x][y]);
+              worldRegions[x + a][y + b].addSurroundingRegion(worldRegions[x][y]);
 						}
 					}
 				}
@@ -532,7 +508,7 @@ public final class L2World {
 		LOG.info("Deleting all visible NPCs.");
 		for (int i = 0; i <= REGIONS_X; i++) {
 			for (int j = 0; j <= REGIONS_Y; j++) {
-				_worldRegions[i][j].deleteVisibleNpcSpawns();
+        worldRegions[i][j].deleteVisibleNpcSpawns();
 			}
 		}
 		LOG.info("All visible NPCs deleted.");
