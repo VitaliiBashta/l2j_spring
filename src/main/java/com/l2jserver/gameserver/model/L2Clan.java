@@ -18,24 +18,6 @@
  */
 package com.l2jserver.gameserver.model;
 
-import static com.l2jserver.gameserver.config.Configuration.character;
-import static com.l2jserver.gameserver.config.Configuration.clan;
-import static com.l2jserver.gameserver.config.Configuration.fortress;
-import static com.l2jserver.gameserver.config.Configuration.general;
-import static java.util.concurrent.TimeUnit.DAYS;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.gameserver.bbs.service.ForumsBBSManager;
 import com.l2jserver.gameserver.dao.factory.impl.DAOFactory;
@@ -54,33 +36,28 @@ import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayer
 import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayerClanLeaderChange;
 import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayerClanLeft;
 import com.l2jserver.gameserver.model.events.impl.character.player.clan.OnPlayerClanLvlUp;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
 import com.l2jserver.gameserver.model.interfaces.INamable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.model.itemcontainer.ClanWarehouse;
 import com.l2jserver.gameserver.model.itemcontainer.ItemContainer;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
-import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
-import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
-import com.l2jserver.gameserver.network.serverpackets.ExSubPledgeSkillAdd;
-import com.l2jserver.gameserver.network.serverpackets.ItemList;
-import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
-import com.l2jserver.gameserver.network.serverpackets.PledgeReceiveSubPledgeCreated;
-import com.l2jserver.gameserver.network.serverpackets.PledgeShowInfoUpdate;
-import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListAll;
-import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListDeleteAll;
-import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListUpdate;
-import com.l2jserver.gameserver.network.serverpackets.PledgeSkillList;
+import com.l2jserver.gameserver.network.serverpackets.*;
 import com.l2jserver.gameserver.network.serverpackets.PledgeSkillList.SubPledgeSkill;
-import com.l2jserver.gameserver.network.serverpackets.PledgeSkillListAdd;
-import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
-import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
-import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.gameserver.util.EnumIntBitmask;
 import com.l2jserver.gameserver.util.Util;
 
-public class L2Clan implements IIdentifiable, INamable {
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.l2jserver.gameserver.config.Configuration.*;
+import static java.util.concurrent.TimeUnit.DAYS;
+
+public class L2Clan implements Identifiable, INamable {
 	
 	private static final Logger _log = Logger.getLogger(L2Clan.class.getName());
 	

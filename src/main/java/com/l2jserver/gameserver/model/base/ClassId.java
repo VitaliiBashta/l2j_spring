@@ -19,20 +19,22 @@
 package com.l2jserver.gameserver.model.base;
 
 import com.l2jserver.gameserver.enums.Race;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 
 /**
  * This class defines all classes (ex : human fighter, darkFighter...) that a player can chose.<br>
  * Data:
+ *
  * <ul>
- * <li>id : The Identifier of the class</li>
- * <li>isMage : True if the class is a mage class</li>
- * <li>race : The race of this class</li>
- * <li>parent : The parent ClassId or null if this class is the root</li>
+ *   <li>id : The Identifier of the class
+ *   <li>isMage : True if the class is a mage class
+ *   <li>race : The race of this class
+ *   <li>parent : The parent ClassId or null if this class is the root
  * </ul>
+ *
  * @since 2005/03/27 15:29:33
  */
-public enum ClassId implements IIdentifiable {
+public enum ClassId implements Identifiable {
 	fighter(0x00, false, Race.HUMAN, null),
 	
 	warrior(0x01, false, Race.HUMAN, fighter),

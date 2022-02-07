@@ -18,8 +18,20 @@
  */
 package com.l2jserver.gameserver.model;
 
-import static com.l2jserver.gameserver.config.Configuration.customs;
-import static com.l2jserver.gameserver.config.Configuration.general;
+import com.l2jserver.commons.util.Rnd;
+import com.l2jserver.gameserver.GeoData;
+import com.l2jserver.gameserver.ThreadPoolManager;
+import com.l2jserver.gameserver.data.sql.impl.TerritoryTable;
+import com.l2jserver.gameserver.data.xml.impl.NpcData;
+import com.l2jserver.gameserver.datatables.NpcPersonalAIData;
+import com.l2jserver.gameserver.model.actor.L2Attackable;
+import com.l2jserver.gameserver.model.actor.L2Npc;
+import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
+import com.l2jserver.gameserver.model.interfaces.ILocational;
+import com.l2jserver.gameserver.model.interfaces.INamable;
+import com.l2jserver.gameserver.model.interfaces.IPositionable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
+import com.l2jserver.gameserver.model.zone.type.NpcSpawnTerritory;
 
 import java.lang.reflect.Constructor;
 import java.util.Deque;
@@ -31,29 +43,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.l2jserver.commons.util.Rnd;
-import com.l2jserver.gameserver.GeoData;
-import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.data.sql.impl.TerritoryTable;
-import com.l2jserver.gameserver.data.xml.impl.NpcData;
-import com.l2jserver.gameserver.datatables.NpcPersonalAIData;
-import com.l2jserver.gameserver.model.actor.L2Attackable;
-import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
-import com.l2jserver.gameserver.model.interfaces.ILocational;
-import com.l2jserver.gameserver.model.interfaces.INamable;
-import com.l2jserver.gameserver.model.interfaces.IPositionable;
-import com.l2jserver.gameserver.model.zone.type.NpcSpawnTerritory;
+import static com.l2jserver.gameserver.config.Configuration.customs;
+import static com.l2jserver.gameserver.config.Configuration.general;
 
 /**
- * This class manages the spawn and respawn of a group of L2NpcInstance that are in the same are and have the same type.<br>
+ * This class manages the spawn and respawn of a group of L2NpcInstance that are in the same are and
+ * have the same type.<br>
  * <B><U>Concept</U>:</B><br>
- * L2NpcInstance can be spawned either in a random position into a location area (if Lox=0 and Locy=0), either at an exact position.<br>
- * The heading of the L2NpcInstance can be a random heading if not defined (value= -1) or an exact heading (ex : merchant...).
+ * L2NpcInstance can be spawned either in a random position into a location area (if Lox=0 and
+ * Locy=0), either at an exact position.<br>
+ * The heading of the L2NpcInstance can be a random heading if not defined (value= -1) or an exact
+ * heading (ex : merchant...).
+ *
  * @author Nightmare
  */
-public class L2Spawn implements IPositionable, IIdentifiable, INamable {
+public class L2Spawn implements IPositionable, Identifiable, INamable {
 	protected static final Logger _log = Logger.getLogger(L2Spawn.class.getName());
 	
 	/** String identifier of this spawn */

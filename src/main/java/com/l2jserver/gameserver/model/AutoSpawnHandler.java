@@ -18,20 +18,6 @@
  */
 package com.l2jserver.gameserver.model;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.l2jserver.commons.database.ConnectionFactory;
 import com.l2jserver.commons.util.Rnd;
 import com.l2jserver.gameserver.ThreadPoolManager;
@@ -39,8 +25,13 @@ import com.l2jserver.gameserver.datatables.SpawnTable;
 import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.MapRegionManager;
 import com.l2jserver.gameserver.model.actor.L2Npc;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.util.Broadcast;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Auto Spawn handler.<br>
@@ -475,13 +466,14 @@ public class AutoSpawnHandler {
 			}
 		}
 	}
-	
-	/**
-	 * AutoSpawnInstance Class<br>
-	 * Stores information about a registered auto spawn.
-	 * @author Tempy
-	 */
-	public static class AutoSpawnInstance implements IIdentifiable {
+
+  /**
+   * AutoSpawnInstance Class<br>
+   * Stores information about a registered auto spawn.
+   *
+   * @author Tempy
+   */
+  public static class AutoSpawnInstance implements Identifiable {
 		protected int _objectId;
 		
 		protected int _spawnIndex;

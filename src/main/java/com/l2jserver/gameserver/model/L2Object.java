@@ -18,10 +18,6 @@
  */
 package com.l2jserver.gameserver.model;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.handler.ActionHandler;
@@ -37,13 +33,7 @@ import com.l2jserver.gameserver.model.actor.knownlist.ObjectKnownList;
 import com.l2jserver.gameserver.model.actor.poly.ObjectPoly;
 import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
-import com.l2jserver.gameserver.model.interfaces.IDecayable;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
-import com.l2jserver.gameserver.model.interfaces.ILocational;
-import com.l2jserver.gameserver.model.interfaces.INamable;
-import com.l2jserver.gameserver.model.interfaces.IPositionable;
-import com.l2jserver.gameserver.model.interfaces.ISpawnable;
-import com.l2jserver.gameserver.model.interfaces.IUniqueId;
+import com.l2jserver.gameserver.model.interfaces.*;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
@@ -52,10 +42,13 @@ import com.l2jserver.gameserver.network.serverpackets.ExSendUIEvent;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 import com.l2jserver.gameserver.util.Util;
 
-/**
- * Base class for all interactive objects.
- */
-public abstract class L2Object extends ListenersContainer implements IIdentifiable, INamable, ISpawnable, IUniqueId, IDecayable, IPositionable {
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/** Base class for all interactive objects. */
+public abstract class L2Object extends ListenersContainer
+    implements Identifiable, INamable, ISpawnable, IUniqueId, IDecayable, IPositionable {
 	/** Name */
 	private String _name;
 	/** Object ID */

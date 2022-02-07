@@ -18,115 +18,16 @@
  */
 package com.l2jserver.gameserver.engines;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.base.PlayerState;
-import com.l2jserver.gameserver.model.conditions.Condition;
-import com.l2jserver.gameserver.model.conditions.ConditionCategoryType;
-import com.l2jserver.gameserver.model.conditions.ConditionChangeWeapon;
-import com.l2jserver.gameserver.model.conditions.ConditionCheckAbnormal;
-import com.l2jserver.gameserver.model.conditions.ConditionGameChance;
-import com.l2jserver.gameserver.model.conditions.ConditionGameTime;
+import com.l2jserver.gameserver.model.conditions.*;
 import com.l2jserver.gameserver.model.conditions.ConditionGameTime.CheckGameTime;
-import com.l2jserver.gameserver.model.conditions.ConditionLogicAnd;
-import com.l2jserver.gameserver.model.conditions.ConditionLogicNot;
-import com.l2jserver.gameserver.model.conditions.ConditionLogicOr;
-import com.l2jserver.gameserver.model.conditions.ConditionMinDistance;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerActiveEffectId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerActiveSkillId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerAgathionEnergy;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerAgathionId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCallPc;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanCreateBase;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanCreateOutpost;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanEscape;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanRefuelAirship;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanResurrect;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanSummon;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanSummonSiegeGolem;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanSweep;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanTakeCastle;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanTakeFort;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanTransform;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCanUntransform;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCharges;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerClassIdRestriction;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCloakStatus;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerCp;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerFlyMounted;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerGrade;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasAgathion;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasCastle;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasClanHall;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasFort;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasPet;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHasServitor;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerHp;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerInsideZoneId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerInstanceId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerInvSize;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerIsClanLeader;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerIsHero;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerLandingZone;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerLevel;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerLevelRange;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerMp;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerPkCount;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerPledgeClass;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerRace;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerRangeFromNpc;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerSex;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerSiegeSide;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerSouls;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerState;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerSubclass;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerTransformationId;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerTvTEvent;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerVehicleMounted;
-import com.l2jserver.gameserver.model.conditions.ConditionPlayerWeight;
-import com.l2jserver.gameserver.model.conditions.ConditionSiegeZone;
-import com.l2jserver.gameserver.model.conditions.ConditionSlotItemId;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetAbnormal;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetActiveEffectId;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetActiveSkillId;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetAggro;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetClassIdRestriction;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetInvSize;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetLevel;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetLevelRange;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetMyParty;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetNpcId;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetNpcType;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetPlayable;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetRace;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetUsesWeaponKind;
-import com.l2jserver.gameserver.model.conditions.ConditionTargetWeight;
-import com.l2jserver.gameserver.model.conditions.ConditionUsingItemType;
-import com.l2jserver.gameserver.model.conditions.ConditionUsingSkill;
-import com.l2jserver.gameserver.model.conditions.ConditionUsingSlotType;
-import com.l2jserver.gameserver.model.conditions.ConditionWithSkill;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.type.ArmorType;
 import com.l2jserver.gameserver.model.items.type.WeaponType;
@@ -135,6 +36,15 @@ import com.l2jserver.gameserver.model.skills.EffectScope;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.model.stats.functions.FuncTemplate;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author mkizub
@@ -261,8 +171,8 @@ public abstract class DocumentBase {
 		final StatsSet parameters = parseParameters(n.getFirstChild(), template);
 		final Condition applyCond = parseCondition(n.getFirstChild(), template);
 		
-		if (template instanceof IIdentifiable) {
-			set.set("id", ((IIdentifiable) template).getId());
+		if (template instanceof Identifiable) {
+			set.set("id", ((Identifiable) template).getId());
 		}
 		
 		final AbstractEffect effect = AbstractEffect.createEffect(attachCond, applyCond, set, parameters);

@@ -18,14 +18,12 @@
  */
 package com.l2jserver.gameserver.model;
 
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
+
 import java.util.List;
 
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
-
-/**
- * @author malyelfik
- */
-public class TowerSpawn implements IIdentifiable {
+/** @author malyelfik */
+public class TowerSpawn implements Identifiable {
 	private final int _npcId;
 	private final Location _location;
 	private List<Integer> _zoneList = null;

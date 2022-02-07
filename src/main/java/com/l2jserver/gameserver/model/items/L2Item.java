@@ -18,15 +18,6 @@
  */
 package com.l2jserver.gameserver.model.items;
 
-import static com.l2jserver.gameserver.config.Configuration.character;
-import static com.l2jserver.gameserver.config.Configuration.general;
-import static com.l2jserver.gameserver.config.Configuration.olympiad;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
-
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.Elementals;
 import com.l2jserver.gameserver.model.L2Object;
@@ -38,21 +29,22 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.events.ListenersContainer;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.items.type.ActionType;
-import com.l2jserver.gameserver.model.items.type.CrystalType;
-import com.l2jserver.gameserver.model.items.type.EtcItemType;
-import com.l2jserver.gameserver.model.items.type.ItemType;
-import com.l2jserver.gameserver.model.items.type.ItemType1;
-import com.l2jserver.gameserver.model.items.type.ItemType2;
-import com.l2jserver.gameserver.model.items.type.MaterialType;
+import com.l2jserver.gameserver.model.items.type.*;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.functions.AbstractFunction;
 import com.l2jserver.gameserver.model.stats.functions.FuncTemplate;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
+import static com.l2jserver.gameserver.config.Configuration.*;
 
 /**
  * This class contains all information concerning the item (weapon, armor, etc).<BR>
@@ -63,7 +55,7 @@ import com.l2jserver.gameserver.util.StringUtil;
  * <li>L2Weapon</li>
  * </ul>
  */
-public abstract class L2Item extends ListenersContainer implements IIdentifiable {
+public abstract class L2Item extends ListenersContainer implements Identifiable {
 	protected static final Logger _log = Logger.getLogger(L2Item.class.getName());
 	
 	public static final int SLOT_NONE = 0x0000;

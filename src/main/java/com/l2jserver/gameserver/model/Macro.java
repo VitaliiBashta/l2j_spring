@@ -18,12 +18,12 @@
  */
 package com.l2jserver.gameserver.model;
 
+import com.l2jserver.gameserver.model.interfaces.INamable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
+
 import java.util.List;
 
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
-import com.l2jserver.gameserver.model.interfaces.INamable;
-
-public class Macro implements IIdentifiable, INamable {
+public class Macro implements Identifiable, INamable {
 	private int _id;
 	private final int _icon;
 	private final String _name;

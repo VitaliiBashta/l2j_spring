@@ -18,20 +18,18 @@
  */
 package com.l2jserver.gameserver.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.l2jserver.gameserver.instancemanager.MapRegionManager;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExManagePartyRoomMember;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
-/**
- * @author Gnacik
- */
-public class PartyMatchRoom implements IIdentifiable {
+import java.util.ArrayList;
+import java.util.List;
+
+/** @author Gnacik */
+public class PartyMatchRoom implements Identifiable {
 	private final int _id;
 	private String _title;
 	private int _loot;

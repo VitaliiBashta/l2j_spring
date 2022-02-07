@@ -20,13 +20,14 @@ package com.l2jserver.gameserver.model.actor.templates;
 
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 
 /**
  * Doors template.
+ *
  * @author JIV
  */
-public class L2DoorTemplate extends L2CharTemplate implements IIdentifiable {
+public class L2DoorTemplate extends L2CharTemplate implements Identifiable {
 	private final int _doorId;
 	private final int[] _nodeX;
 	private final int[] _nodeY;

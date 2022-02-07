@@ -18,24 +18,22 @@
  */
 package com.l2jserver.gameserver.model.actor.transform;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.l2jserver.gameserver.data.xml.impl.SkillTreesData;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.holders.AdditionalItemHolder;
 import com.l2jserver.gameserver.model.holders.AdditionalSkillHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.network.serverpackets.ExBasicActionList;
 
-/**
- * @author UnAfraid
- */
-public final class Transform implements IIdentifiable {
+import java.util.ArrayList;
+import java.util.List;
+
+/** @author UnAfraid */
+public final class Transform implements Identifiable {
 	private final int _id;
 	private final int _displayId;
 	private final TransformType _type;

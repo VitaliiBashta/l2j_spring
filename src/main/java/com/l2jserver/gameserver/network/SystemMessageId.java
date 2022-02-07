@@ -1,25 +1,9 @@
-/*
- * Copyright © 2004-2021 L2J Server
- *
- * This file is part of L2J Server.
- *
- * L2J Server is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * L2J Server is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.l2jserver.gameserver.network;
 
 import com.l2jserver.gameserver.model.clientstrings.Builder;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -32,8 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static com.l2jserver.gameserver.config.Configuration.customs;
 import static com.l2jserver.gameserver.config.Configuration.server;
@@ -13815,30 +13797,16 @@ public final class SystemMessageId {
   public static final SystemMessageId
       YOU_CANNOT_BOOKMARK_THIS_LOCATION_BECAUSE_YOU_DO_NOT_HAVE_A_MY_TELEPORT_FLAG =
           new SystemMessageId(6501);
-  /**
-   * ID: 6503<br>
-   * Message: The evil Thomas D. Turkey has appeared. Please save Santa.
-   */
   public static final SystemMessageId THOMAS_D_TURKEY_APPEARED = new SystemMessageId(6503);
-  /**
-   * ID: 6504<br>
-   * Message: You won the battle against Thomas D. Turkey. Santa has been rescued.
-   */
+
   public static final SystemMessageId THOMAS_D_TURKEY_DEFETED = new SystemMessageId(6504);
-  /**
-   * ID: 6505<br>
-   * Message: You did not rescue Santa, and Thomas D. Turkey has disappeared.
-   */
+
   public static final SystemMessageId THOMAS_D_TURKEY_DISAPPEARED = new SystemMessageId(6505);
 
-  private static final Logger _log = Logger.getLogger(SystemMessageId.class.getName());
+  private static final Logger LOG = LogManager.getLogger(SystemMessageId.class);
   private static final SMLocalisation[] EMPTY_SML_ARRAY = new SMLocalisation[0];
   /** Map containing all SystemMessageIds. */
-  private static final Map<Integer, SystemMessageId> VALUES = new HashMap<>(2524);
-
-  static {
-    buildFastLookupTable();
-  }
+  private static final Map<Integer, SystemMessageId> VALUES = buildFastLookupTable();
 
   private final int _id;
   private String _name;
@@ -13851,9 +13819,9 @@ public final class SystemMessageId {
     _localisations = EMPTY_SML_ARRAY;
   }
 
-  private static void buildFastLookupTable() {
+  private static Map<Integer, SystemMessageId> buildFastLookupTable() {
     final Field[] fields = SystemMessageId.class.getDeclaredFields();
-
+    var values = new HashMap<Integer, SystemMessageId>(2524);
     int mod;
     SystemMessageId smId;
     for (final Field field : fields) {
@@ -13866,15 +13834,13 @@ public final class SystemMessageId {
           smId = (SystemMessageId) field.get(null);
           smId.setName(field.getName());
           smId.setParamCount(parseMessageParameters(field.getName()));
-          VALUES.put(smId.getId(), smId);
+          values.put(smId.getId(), smId);
         } catch (final Exception e) {
-          _log.log(
-              Level.WARNING,
-              "SystemMessageId: Failed field access for '" + field.getName() + "'",
-              e);
+          LOG.warn("SystemMessageId: Failed field access for '{}'", field.getName(), e);
         }
       }
     }
+    return values;
   }
 
   private static int parseMessageParameters(final String name) {
@@ -13918,7 +13884,7 @@ public final class SystemMessageId {
     }
 
     if (!customs().multiLangSystemMessageEnable()) {
-      _log.log(Level.INFO, "SystemMessageId: MultiLanguage disabled.");
+      LOG.info("SystemMessageId: MultiLanguage disabled.");
       return;
     }
 
@@ -13936,7 +13902,7 @@ public final class SystemMessageId {
         continue;
       }
 
-      _log.log(Level.INFO, "SystemMessageId: Loading localisation for '" + lang + "'");
+      LOG.info("SystemMessageId: Loading localisation for '{}'", lang);
 
       try {
         Document doc = factory.newDocumentBuilder().parse(file);
@@ -13953,8 +13919,7 @@ public final class SystemMessageId {
                   node = nnmb.getNamedItem("name");
                   smId = getSystemMessageId(node.getNodeValue());
                   if (smId == null) {
-                    _log.log(
-                        Level.WARNING,
+                    LOG.warn(
                         "SystemMessageId: Unknown SMID '"
                             + node.getNodeValue()
                             + "', lang '"
@@ -13966,8 +13931,7 @@ public final class SystemMessageId {
 
                 node = nnmb.getNamedItem("text");
                 if (node == null) {
-                  _log.log(
-                      Level.WARNING,
+                  LOG.warn(
                       "SystemMessageId: No text defined for SMID '"
                           + smId
                           + "', lang '"
@@ -13978,8 +13942,7 @@ public final class SystemMessageId {
 
                 String text = node.getNodeValue();
                 if (text.isEmpty() || (text.length() > 255)) {
-                  _log.log(
-                      Level.WARNING,
+                  LOG.warn(
                       "SystemMessageId: Invalid text defined for SMID '"
                           + smId
                           + "' (to long or empty), lang '"
@@ -13993,8 +13956,8 @@ public final class SystemMessageId {
             }
           }
         }
-      } catch (final Exception e) {
-        _log.log(Level.SEVERE, "SystemMessageId: Failed loading '" + file + "'", e);
+      } catch (Exception e) {
+        LOG.error("SystemMessageId: Failed loading '" + file + "'", e);
       }
     }
   }
@@ -14017,8 +13980,6 @@ public final class SystemMessageId {
 
   /**
    * You better don`t touch this!
-   *
-   * @param params
    */
   public void setParamCount(final int params) {
     if (params < 0) {

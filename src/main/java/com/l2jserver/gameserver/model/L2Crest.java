@@ -18,18 +18,18 @@
  */
 package com.l2jserver.gameserver.model;
 
-import static com.l2jserver.gameserver.config.Configuration.hexId;
-
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.network.serverpackets.AllyCrest;
 import com.l2jserver.gameserver.network.serverpackets.ExPledgeCrestLarge;
 import com.l2jserver.gameserver.network.serverpackets.PledgeCrest;
 
+import static com.l2jserver.gameserver.config.Configuration.hexId;
+
 /**
  * @author NosBit
  */
-public final class L2Crest implements IIdentifiable {
+public final class L2Crest implements Identifiable {
 	public enum CrestType {
 		PLEDGE(1),
 		PLEDGE_LARGE(2),

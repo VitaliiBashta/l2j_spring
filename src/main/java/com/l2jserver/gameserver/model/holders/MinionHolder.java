@@ -18,13 +18,14 @@
  */
 package com.l2jserver.gameserver.model.holders;
 
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 
 /**
  * This class hold info needed for minions spawns<br>
+ *
  * @author Zealar
  */
-public class MinionHolder implements IIdentifiable {
+public class MinionHolder implements Identifiable {
 	private final int _id;
 	private final int _count;
 	private final long _respawnTime;

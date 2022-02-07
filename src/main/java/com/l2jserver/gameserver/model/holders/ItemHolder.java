@@ -18,14 +18,15 @@
  */
 package com.l2jserver.gameserver.model.holders;
 
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 
 /**
  * A simple DTO for items; contains item ID and count.<br>
  * Extended by {@link ItemChanceHolder}, {@link QuestItemHolder}, {@link UniqueItemHolder}.
+ *
  * @author UnAfraid
  */
-public class ItemHolder implements IIdentifiable {
+public class ItemHolder implements Identifiable {
 	private final int _id;
 	private final long _count;
 	

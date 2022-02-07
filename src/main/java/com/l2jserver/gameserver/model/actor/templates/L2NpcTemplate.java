@@ -18,16 +18,6 @@
  */
 package com.l2jserver.gameserver.model.actor.templates;
 
-import static com.l2jserver.gameserver.config.Configuration.npc;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.l2jserver.gameserver.data.xml.impl.NpcData;
 import com.l2jserver.gameserver.enums.AISkillScope;
 import com.l2jserver.gameserver.enums.AIType;
@@ -39,14 +29,19 @@ import com.l2jserver.gameserver.model.base.ClassId;
 import com.l2jserver.gameserver.model.drops.DropListScope;
 import com.l2jserver.gameserver.model.drops.IDropItem;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
+import com.l2jserver.gameserver.model.interfaces.Identifiable;
 import com.l2jserver.gameserver.model.skills.Skill;
+
+import java.util.*;
+
+import static com.l2jserver.gameserver.config.Configuration.npc;
 
 /**
  * NPC template.
+ *
  * @author NosBit
  */
-public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable {
+public final class L2NpcTemplate extends L2CharTemplate implements Identifiable {
 	private int _id;
 	private int _displayId;
 	private byte _level;
